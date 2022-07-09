@@ -5,8 +5,6 @@ import requests
 import os
 import re
 
-os.system('clear')
-
 date = datetime.datetime.now()
 
 mydb = mysql.connector.connect(
@@ -16,8 +14,30 @@ mydb = mysql.connector.connect(
   database="pythonDB"
 )
 
+def menu():
+    os.system('clear')
+    print('\033[1m' + "menu" + '\033[0m')
+    print('\033[1m' + "1"  + '\033[0m' + " -> add new product")
+    print('\033[1m' + "2"  + '\033[0m' + " -> add new product")
+    print('\033[1m' + "3"  + '\033[0m' + " -> add new product")
+    print('\033[1m' + "4"  + '\033[0m' + " -> add new product")
+    print(" ")
+    menu = input()
+
+    if menu == '1':
+        url_input()
+    elif menu == '2':
+        url_input()
+    elif menu == '3':
+        url_input()
+    elif menu == '4':
+        url_input()
+    else:
+        menu()
+
 def url_input():
-    print("paste a product url: " , end="")
+    os.system('clear')
+    print('\033[1m' + "paste a product url: " , end="" + '\033[0m')
     url = input()
 
     if 'droneshop.nl/' in url:
@@ -47,23 +67,23 @@ def url_input():
             print("stock: in stock")
 
         print(" ")
-        print("you sure you want to at the", name, "to the database")
+        print('\033[1m' + "you sure you want to add the", name, "to the database" + '\033[0m')
         print("yes/no: " , end="")
         yesorno = input()
 
         if yesorno == 'yes' or yesorno == 'YES' or yesorno == 'y':
             mycursor = mydb.cursor()
-            sql = "INSERT INTO product (url, name, stock) VALUES (%s, %s, %s)"
-            val = (url, name, stock)
-            mycursor.execute(sql, val)
+            sql = "INSERT INTO product (name) VALUES (%s)"
+            val = (name)
+            mycursor.execute(sql, (val,))
             mydb.commit()
 
             id = mycursor.lastrowid
             print(mycursor.rowcount, "record inserted with id:", id)
 
             mycursor = mydb.cursor()
-            sql = "INSERT INTO product_track (product, date, price) VALUES (%s, %s, %s)"
-            val = (id, date.strftime("%Y-%m-%d"), input_price)
+            sql = "INSERT INTO product_track (shop, url, product, stock, date, price) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = ('droneshop', url, id, stock, date.strftime("%Y-%m-%d"), input_price)
             mycursor.execute(sql, val)
             mydb.commit()
 
@@ -75,4 +95,4 @@ def url_input():
         print(error)
         url_input()
 
-url_input()
+menu()
