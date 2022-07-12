@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 11, 2022 at 07:10 PM
+-- Generation Time: Jul 12, 2022 at 05:42 PM
 -- Server version: 10.6.8-MariaDB
 -- PHP Version: 8.1.8
 
@@ -38,7 +38,9 @@ CREATE TABLE `product` (
 
 INSERT INTO `product` (`id`, `name`) VALUES
 (35, 'RadioMaster TX16S'),
-(37, 'DJI Mini 2');
+(37, 'DJI Mini 2'),
+(38, 'RadioMaster T16S MkII V4 MAX with AG01 CNC'),
+(39, 'MAMBA MK4 F722 65A 128K APP Flight Stack (30×30)');
 
 -- --------------------------------------------------------
 
@@ -59,8 +61,11 @@ CREATE TABLE `product_info` (
 
 INSERT INTO `product_info` (`id`, `website`, `product`, `url`) VALUES
 (7, 1, 35, 'https://droneshop.nl/radiomaster-tx16s'),
-(8, 2, 35, ''),
-(9, 1, 37, 'https://droneshop.nl/dji-mini-2');
+(8, 2, 35, 'https://www.getfpv.com/radiomaster-tx16s-mkii-2-4ghz-16ch-radio-transmitter-elrs-w-hall-gimbals-v4-0.html'),
+(9, 1, 37, 'https://droneshop.nl/dji-mini-2'),
+(10, 3, 38, 'https://airjacker.com/products/radiomaster-t16s-mkii-v4-max-with-ag01-gimbals'),
+(11, 4, 39, 'https://yourfpv.co.uk/product/mamba-mk4-f722-65a-128k-app-flight-stack-30x30/'),
+(12, 4, 35, 'https://yourfpv.co.uk/product/radiomaster-tx16s-hall-gimbal-transmitter/');
 
 -- --------------------------------------------------------
 
@@ -83,7 +88,10 @@ CREATE TABLE `product_track` (
 INSERT INTO `product_track` (`id`, `product_info`, `price`, `stock`, `date`) VALUES
 (1, 7, '198', 0, '2022-07-11'),
 (2, 8, '200', 0, '2022-07-11'),
-(3, 9, '449', 1, '2022-07-11');
+(3, 9, '449', 1, '2022-07-11'),
+(4, 10, '401', 1, '2022-07-12'),
+(5, 11, '130', 1, '2022-07-12'),
+(6, 12, '189', 1, '2022-07-12');
 
 -- --------------------------------------------------------
 
@@ -101,8 +109,10 @@ CREATE TABLE `website` (
 --
 
 INSERT INTO `website` (`id`, `website`) VALUES
+(3, 'airjacker'),
 (1, 'droneshop'),
-(2, 'getfpv');
+(2, 'getfpv'),
+(4, 'yourfpv');
 
 --
 -- Indexes for dumped tables
@@ -147,25 +157,25 @@ ALTER TABLE `website`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `product_info`
 --
 ALTER TABLE `product_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `product_track`
 --
 ALTER TABLE `product_track`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `website`
 --
 ALTER TABLE `website`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
