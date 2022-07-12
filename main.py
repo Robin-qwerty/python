@@ -18,10 +18,11 @@ mydb = mysql.connector.connect(
 
 def menu():
     os.system('clear')
-    print('\033[1m' + "menu" + '\033[0m')
+    print('\033[1m' + "menu" + '\033[0m' + " type 1, 2 or 3")
     print('\033[1m' + "1"  + '\033[0m' + " -> database")
     print('\033[1m' + "2"  + '\033[0m' + " -> add new product")
     print('\033[1m' + "3"  + '\033[0m' + " -> update product track")
+    print('\033[1m' + "exit"  + '\033[0m' + " -> exit program")
     print(" ")
     menu = input()
 
@@ -31,6 +32,8 @@ def menu():
         url_input()
     elif menu == '3':
         updatetrack()
+    elif menu == '3':
+        quit()
 
 
 def url_input():
@@ -65,7 +68,7 @@ def url_input():
                     for x in myresult:
                         print("product word toegevoegt aan:", x)
                 except:
-                    error = "Geen geldige id"
+                    error = "not a usable id"
                     print(error)
                     time.sleep(2)
                     insertproductdatabase()
@@ -86,7 +89,7 @@ def url_input():
                 time.sleep(2)
                 menu()
             else:
-                error = "Geen geldige input"
+                error = "not a usable input"
                 print(error)
                 time.sleep(2)
                 insertproductdatabase()
@@ -116,7 +119,7 @@ def url_input():
                 time.sleep(2)
                 menu()
             else:
-                error = "Geen geldige input"
+                error = "not a usable input"
                 print(error)
                 time.sleep(2)
                 insertproductdatabase()
@@ -162,7 +165,7 @@ def url_input():
             if yesorno == 'yes' or yesorno == 'YES' or yesorno == 'y':
                 insertproductdatabase()
         except:
-            error = "geen bruikbare link"
+            error = "no usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -206,14 +209,105 @@ def url_input():
             else:
                 url_input()
         except:
-            error = "geen bruikbare link"
+            error = "no usable link"
+            print(error)
+            time.sleep(2)
+            url_input()
+    elif 'airjacker.com/products/' in url:
+        try:
+            website = '3'
+            print(" ")
+            result = requests.get(url)
+            doc = BeautifulSoup(result.content, "html.parser")
+
+            lists = doc.find('div', id="ProductInfo-template--14434326741090__main")
+
+            name = lists.find('h1', class_="product__title").text.replace('\n','').replace('              ', '').replace('            ', '')
+            input_price = lists.find('span', class_="price-item price-item--regular").text
+            try:
+                lists.find('button', name_="add")
+                stock = 1
+            except:
+                stock = 0
+
+            print("name:", name)
+
+            special_characters = ['€','$','£',' ']
+            for i in special_characters:
+                input_price = input_price.replace(i,'')
+
+            input_price = float(input_price) * 1.18
+            input_price = float(round(input_price, 2))
+            print("price:", input_price)
+
+            if stock == 0:
+                print("stock: out of stock")
+            else:
+                print("stock: in stock")
+
+            print(" ")
+            print('\033[1m' + "you sure you want to add the", name, "to the database" + '\033[0m')
+            print("yes/no: " , end="")
+            yesorno = input()
+
+            if yesorno == 'yes' or yesorno == 'YES' or yesorno == 'y':
+                insertproductdatabase()
+            else:
+                url_input()
+        except:
+            error = "no usable link"
+            print(error)
+            time.sleep(2)
+            url_input()
+    elif 'yourfpv.co.uk/product/' in url:
+        try:
+            website = '4'
+            print(" ")
+            result = requests.get(url)
+            doc = BeautifulSoup(result.content, "html.parser")
+            lists = doc.find('div', class_="product-info summary col-fit col entry-summary product-summary text-left form-minimal")
+
+            name = lists.find('h1', class_="product-title product_title entry-title").text.replace('\n','').replace('', '').replace('', '')
+            input_price = lists.find('bdi').text
+            try:
+                lists.find('p', class_="stock in-stock")
+                stock = 1
+            except:
+                stock = 0
+
+            print("name:", name)
+
+            special_characters = ['€','$','£',' ']
+            for i in special_characters:
+                input_price = input_price.replace(i,'')
+
+            input_price = float(input_price) * 1.18
+            input_price = float(round(input_price, 2))
+            print("price:", input_price)
+
+            if stock == 0:
+                print("stock: out of stock")
+            else:
+                print("stock: in stock")
+
+            print(" ")
+            print('\033[1m' + "you sure you want to add the", name, "to the database" + '\033[0m')
+            print("yes/no: " , end="")
+            yesorno = input()
+
+            if yesorno == 'yes' or yesorno == 'YES' or yesorno == 'y':
+                insertproductdatabase()
+            else:
+                url_input()
+        except:
+            error = "no usable link"
             print(error)
             time.sleep(2)
             url_input()
     elif 'exit' in url:
         menu()
     else:
-        error = "geen bruikbare link"
+        error = "no usable link"
         print(error)
         time.sleep(2)
         url_input()
@@ -224,19 +318,79 @@ def database():
     mycursor.execute("SELECT * FROM product")
     myresult = mycursor.fetchall()
 
-    print(" ")
     print('\033[1m' + "bestaande producten:" + '\033[0m')
     for x in myresult:
         print(x)
 
-    exit = input()
+    print(" ")
+    print("type a id to see more or 'exit' to exit: ", end="")
+    input_id = input()
 
-    if 'exit' in exit:
+    if 'exit' in input_id:
         menu()
     else:
-        menu()
+        try:
+            val = int(input_id)
+            val = 'number'
+
+            if val == 'number':
+                try:
+                    sql = "SELECT product_info.id, product_info.url, website.website FROM product_info INNER JOIN website ON website.id = product_info.website WHERE product_info.product = %s"
+                    val = (input_id)
+                    mycursor.execute(sql, (val,))
+                    myresult = mycursor.fetchall()
+
+                    for x in myresult:
+                        print(x)
+
+                    print(" ")
+                    print("type a id to see more or 'exit' to exit: ", end="")
+                    input_id = input()
+
+                    if 'exit' in input_id:
+                        menu()
+                    else:
+                        try:
+                            val = int(input_id)
+                            val = 'number'
+
+                            if val == 'number':
+                                try:
+                                    sql = "SELECT product_track.id, product_track.price, product_track.stock, product_track.date FROM product_track INNER JOIN product_info ON product_info.id = product_track.product_info WHERE product_track.product_info = %s"
+                                    val = (input_id)
+                                    mycursor.execute(sql, (val,))
+                                    myresult = mycursor.fetchall()
+
+                                    for x in myresult:
+                                        print(x)
+
+                                    print(" ")
+                                    print("type 'exit' to exit: ", end="")
+                                    input_id = input()
+                                    database()
+                                except:
+                                    error = "not a usable id"
+                                    print(error)
+                                    time.sleep(2)
+                                    database()
+                        except:
+                            error = "not a usable id"
+                            print(error)
+                            time.sleep(2)
+                            database()
+
+                except:
+                    error = "not a usable id"
+                    print(error)
+                    time.sleep(2)
+                    database()
+
+        except:
+            database()
 
 def updatetrack():
+    os.system('clear')
+
     exit = input()
 
     if 'exit' in exit:
