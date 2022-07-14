@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 14, 2022 at 10:03 AM
+-- Generation Time: Jul 14, 2022 at 10:10 AM
 -- Server version: 10.6.8-MariaDB
 -- PHP Version: 8.1.8
 
@@ -24,21 +24,41 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `brand`
+--
+
+CREATE TABLE `brand` (
+  `id` int(11) NOT NULL,
+  `brand_name` varchar(33) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `brand`
+--
+
+INSERT INTO `brand` (`id`, `brand_name`) VALUES
+(1, 'RadioMaster'),
+(2, 'DJI');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
   `id` int(11) NOT NULL,
-  `name` varchar(88) COLLATE utf8mb4_unicode_ci NOT NULL
+  `name` varchar(88) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `brand` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `name`) VALUES
-(35, 'RadioMaster TX16S'),
-(37, 'DJI Mini 2');
+INSERT INTO `product` (`id`, `name`, `brand`) VALUES
+(35, 'RadioMaster TX16S', 1),
+(37, 'DJI Mini 2', 2);
 
 -- --------------------------------------------------------
 
@@ -121,11 +141,18 @@ INSERT INTO `website` (`id`, `website`) VALUES
 --
 
 --
+-- Indexes for table `brand`
+--
+ALTER TABLE `brand`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`);
+  ADD KEY `id` (`id`),
+  ADD KEY `brand` (`brand`);
 
 --
 -- Indexes for table `product_info`
@@ -156,6 +183,12 @@ ALTER TABLE `website`
 --
 
 --
+-- AUTO_INCREMENT for table `brand`
+--
+ALTER TABLE `brand`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
@@ -182,6 +215,12 @@ ALTER TABLE `website`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `product`
+--
+ALTER TABLE `product`
+  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`brand`) REFERENCES `brand` (`id`);
 
 --
 -- Constraints for table `product_info`
