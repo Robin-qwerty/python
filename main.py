@@ -45,13 +45,13 @@ def url_input():
         myresult = mycursor.fetchall()
 
         print(" ")
-        print('\033[1m' + "bestaande producten:" + '\033[0m')
+        print('\033[1m' + "existing products:" + '\033[0m')
         for x in myresult:
             print(x)
 
         print(" ")
-        print('\033[1m' + "Wil je dit product aan een bestaand product koppelen?" + '\033[0m')
-        print('\033[1m' + "Zo ja type het id van het product of type 'no' als je een nieuwe wilt aanamken: ", end="" + '\033[0m')
+        print('\033[1m' + "Do you want to link this product to an existing product?" + '\033[0m')
+        print('\033[1m' + "If yes, type the id of the product or type 'no' if you want to create a new product: ", end="" + '\033[0m')
         productid = input()
 
         try:
@@ -71,7 +71,7 @@ def url_input():
                         time.sleep(2)
                         insertproductdatabase()
                     else:
-                        print("product word toegevoegt aan:", x)
+                        print("Product is added to:", x)
 
                 sql = "INSERT INTO product_info (website, url, product) VALUES (%s, %s, %s)"
                 val = (website, url, productid)
@@ -123,7 +123,7 @@ def url_input():
                                 time.sleep(2)
                                 insertproductdatabase()
                             else:
-                                print("product word toegevoegt aan:", x)
+                                print("Product is added to:", x)
 
                         sql = "INSERT INTO product (name, brand) VALUES (%s, %s)"
                         val = (name, brand)
@@ -183,8 +183,9 @@ def url_input():
                 time.sleep(2)
                 insertproductdatabase()
 
-    print('\033[1m' + "exit by typing 'exit'" + '\033[0m')
-    print('\033[1m' + "paste a product url: ", end="" + '\033[0m')
+    print('\033[1m' + "Exit by typing 'exit'" + '\033[0m')
+    print('\033[1m' + "You can paste a product url from: " + '\033[0m' + '\033[3m' + "droneshop, getfpv, airjacker, yourfpv, unmannedtechshop or hobbyrc" + '\033[0m')
+    print('\033[1m' + "Url: ", end="" + '\033[0m')
     url = input()
 
     price_usd = None
@@ -227,7 +228,7 @@ def url_input():
             if yesorno == 'yes' or yesorno == 'YES' or yesorno == 'y':
                 insertproductdatabase()
         except:
-            error = "no usable link"
+            error = "not a usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -258,7 +259,7 @@ def url_input():
                 input_price = input_price.replace(i,'')
 
             price_usd = input_price
-            input_price = float(input_price) * 0.993
+            input_price = float(input_price) * 0.9921
             input_price = float(round(input_price, 2))
             print("price:", input_price)
             print("price in usd: ", price_usd)
@@ -278,7 +279,7 @@ def url_input():
             else:
                 url_input()
         except:
-            error = "no usable link"
+            error = "not a usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -306,7 +307,7 @@ def url_input():
                 input_price = input_price.replace(i,'')
 
             price_pounds = input_price
-            input_price = float(input_price) * 1.18
+            input_price = float(input_price) * 1.1823
             input_price = float(round(input_price, 2))
             print("price:", input_price)
             print("price in pounds: ", price_pounds)
@@ -326,7 +327,7 @@ def url_input():
             else:
                 url_input()
         except:
-            error = "no usable link"
+            error = "not a usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -354,7 +355,7 @@ def url_input():
                 input_price = input_price.replace(i,'')
 
             price_pounds = input_price
-            input_price = float(input_price) * 1.18
+            input_price = float(input_price) * 1.1823
             input_price = float(round(input_price, 2))
             print("price:", input_price)
             print("price in pounds: ", price_pounds)
@@ -374,7 +375,7 @@ def url_input():
             else:
                 url_input()
         except:
-            error = "no usable link"
+            error = "not a usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -402,7 +403,7 @@ def url_input():
                 input_price = input_price.replace(i,'')
 
             price_pounds = input_price
-            input_price = float(input_price) * 1.18
+            input_price = float(input_price) * 1.1823
             input_price = float(round(input_price, 2))
             print("price:", input_price)
             print("price in pounds: ", price_pounds)
@@ -422,7 +423,7 @@ def url_input():
             else:
                 url_input()
         except:
-            error = "no usable link"
+            error = "not a usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -450,7 +451,7 @@ def url_input():
                 input_price = input_price.replace(i,'')
 
             price_pounds = input_price
-            input_price = float(input_price) * 1.18
+            input_price = float(input_price) * 1.1823
             input_price = float(round(input_price, 2))
             print("price:", input_price)
             print("price in pounds: ", price_pounds)
@@ -470,7 +471,57 @@ def url_input():
             else:
                 url_input()
         except:
-            error = "no usable link"
+            error = "not a usable link"
+            print(error)
+            time.sleep(2)
+            url_input()
+    elif 'racedayquads.com/products/' in url:
+        try:
+            website = '7'
+            print(" ")
+            result = requests.get(url)
+            doc = BeautifulSoup(result.content, "html.parser")
+            lists = doc.find('div', class_="product-details")
+
+            name = lists.find('h1', class_="product-title").text.replace('\n','').replace('                              ', '').replace('                            ', '')
+            script = doc.find_all('script')[1].text.strip()
+            data = json.loads(script)
+            input_price = data["offers"][0]["price"]
+
+            try:
+                stock = lists.find('div', class_="in-stock").text
+                stock = 1
+            except:
+                stock = 0
+
+            print("name:", name)
+
+            special_characters = ['€','$','£',' ']
+            for i in special_characters:
+                input_price = input_price.replace(i,'')
+
+            price_pounds = input_price
+            input_price = float(input_price) * 0.9921
+            input_price = float(round(input_price, 2))
+            print("price:", input_price)
+            print("price in usd: ", price_pounds)
+
+            if stock == 0:
+                print("stock: out of stock")
+            else:
+                print("stock: in stock")
+
+            print(" ")
+            print('\033[1m' + "you sure you want to add the", name, "to the database" + '\033[0m')
+            print("yes/no: " , end="")
+            yesorno = input()
+
+            if yesorno == 'yes' or yesorno == 'YES' or yesorno == 'y':
+                insertproductdatabase()
+            else:
+                url_input()
+        except:
+            error = "not a usable link"
             print(error)
             time.sleep(2)
             url_input()
@@ -479,7 +530,7 @@ def url_input():
     elif 'x' in url:
         menu()
     else:
-        error = "no usable link"
+        error = "not a usable link"
         print(error)
         time.sleep(2)
         url_input()
@@ -490,7 +541,7 @@ def database():
     mycursor.execute("SELECT product.id, product.name, brand.brand_name FROM product INNER JOIN brand ON brand.id = product.brand")
     myresult = mycursor.fetchall()
 
-    print('\033[1m' + "bestaande producten:" + '\033[0m')
+    print('\033[1m' + "existing products:" + '\033[0m')
     for x in myresult:
         print(x)
 
@@ -510,7 +561,7 @@ def database():
             if val == 'number':
                 try:
                     print(" ")
-                    sql = "SELECT product_info.id, product_info.url, website.website FROM product_info INNER JOIN website ON website.id = product_info.website WHERE product_info.product = %s"
+                    sql = "SELECT product_info.id, product_info.url, website.website_name FROM product_info INNER JOIN website ON website.id = product_info.website WHERE product_info.product = %s"
                     val = (input_id)
                     mycursor.execute(sql, (val,))
                     myresult = mycursor.fetchall()
