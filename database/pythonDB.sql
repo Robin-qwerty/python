@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.3.0-dev+20220408.20e55eb1ac
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 12, 2022 at 05:42 PM
+-- Generation Time: Jul 14, 2022 at 10:03 AM
 -- Server version: 10.6.8-MariaDB
 -- PHP Version: 8.1.8
 
@@ -38,9 +38,7 @@ CREATE TABLE `product` (
 
 INSERT INTO `product` (`id`, `name`) VALUES
 (35, 'RadioMaster TX16S'),
-(37, 'DJI Mini 2'),
-(38, 'RadioMaster T16S MkII V4 MAX with AG01 CNC'),
-(39, 'MAMBA MK4 F722 65A 128K APP Flight Stack (30×30)');
+(37, 'DJI Mini 2');
 
 -- --------------------------------------------------------
 
@@ -60,12 +58,12 @@ CREATE TABLE `product_info` (
 --
 
 INSERT INTO `product_info` (`id`, `website`, `product`, `url`) VALUES
-(7, 1, 35, 'https://droneshop.nl/radiomaster-tx16s'),
-(8, 2, 35, 'https://www.getfpv.com/radiomaster-tx16s-mkii-2-4ghz-16ch-radio-transmitter-elrs-w-hall-gimbals-v4-0.html'),
-(9, 1, 37, 'https://droneshop.nl/dji-mini-2'),
-(10, 3, 38, 'https://airjacker.com/products/radiomaster-t16s-mkii-v4-max-with-ag01-gimbals'),
-(11, 4, 39, 'https://yourfpv.co.uk/product/mamba-mk4-f722-65a-128k-app-flight-stack-30x30/'),
-(12, 4, 35, 'https://yourfpv.co.uk/product/radiomaster-tx16s-hall-gimbal-transmitter/');
+(20, 1, 35, 'https://droneshop.nl/radiomaster-tx16s'),
+(21, 5, 35, 'https://www.unmannedtechshop.co.uk/product/radiomaster-tx16s-mkii/'),
+(22, 2, 35, 'https://www.getfpv.com/radiomaster-tx16s-multi-protocol-rf-2-4ghz-16ch-radio-transmitter-hall-gimbal-black.html'),
+(26, 6, 35, 'https://www.hobbyrc.co.uk/radiomaster-tx16s-mkii-hall-gimbal-transmitter-4in1'),
+(27, 3, 35, 'https://airjacker.com/products/radiomaster-t16s-mkii-4-in-1?_pos=4&_sid=5621d72d8&_ss=r'),
+(28, 4, 35, 'https://yourfpv.co.uk/product/radiomaster-tx16s-hall-gimbal-transmitter/');
 
 -- --------------------------------------------------------
 
@@ -76,7 +74,9 @@ INSERT INTO `product_info` (`id`, `website`, `product`, `url`) VALUES
 CREATE TABLE `product_track` (
   `id` int(11) NOT NULL,
   `product_info` int(11) NOT NULL,
-  `price` decimal(9,0) NOT NULL,
+  `price` decimal(9,2) NOT NULL,
+  `price_usd` decimal(9,2) DEFAULT NULL,
+  `price_pounds` decimal(9,2) DEFAULT NULL,
   `stock` tinyint(1) NOT NULL,
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -85,13 +85,13 @@ CREATE TABLE `product_track` (
 -- Dumping data for table `product_track`
 --
 
-INSERT INTO `product_track` (`id`, `product_info`, `price`, `stock`, `date`) VALUES
-(1, 7, '198', 0, '2022-07-11'),
-(2, 8, '200', 0, '2022-07-11'),
-(3, 9, '449', 1, '2022-07-11'),
-(4, 10, '401', 1, '2022-07-12'),
-(5, 11, '130', 1, '2022-07-12'),
-(6, 12, '189', 1, '2022-07-12');
+INSERT INTO `product_track` (`id`, `product_info`, `price`, `price_usd`, `price_pounds`, `stock`, `date`) VALUES
+(7, 20, '198.00', NULL, NULL, 0, '2022-07-13'),
+(8, 21, '212.39', NULL, '179.99', 0, '2022-07-13'),
+(9, 22, '198.59', '199.99', NULL, 0, '2022-07-13'),
+(12, 26, '212.39', NULL, '179.99', 0, '2022-07-13'),
+(13, 27, '212.28', NULL, '179.90', 1, '2022-07-13'),
+(14, 28, '188.79', NULL, '159.99', 0, '2022-07-13');
 
 -- --------------------------------------------------------
 
@@ -112,6 +112,8 @@ INSERT INTO `website` (`id`, `website`) VALUES
 (3, 'airjacker'),
 (1, 'droneshop'),
 (2, 'getfpv'),
+(6, 'hobbyrc'),
+(5, 'unmannedtechshop'),
 (4, 'yourfpv');
 
 --
@@ -163,19 +165,19 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `product_info`
 --
 ALTER TABLE `product_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `product_track`
 --
 ALTER TABLE `product_track`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `website`
 --
 ALTER TABLE `website`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -185,19 +187,14 @@ ALTER TABLE `website`
 -- Constraints for table `product_info`
 --
 ALTER TABLE `product_info`
-  ADD CONSTRAINT `product_info_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `product_info_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `product_info_ibfk_2` FOREIGN KEY (`website`) REFERENCES `website` (`id`);
 
 --
 -- Constraints for table `product_track`
 --
 ALTER TABLE `product_track`
   ADD CONSTRAINT `product_track_ibfk_1` FOREIGN KEY (`product_info`) REFERENCES `product_info` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `website`
---
-ALTER TABLE `website`
-  ADD CONSTRAINT `website_ibfk_1` FOREIGN KEY (`id`) REFERENCES `product_info` (`website`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
