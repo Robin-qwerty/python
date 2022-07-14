@@ -41,7 +41,7 @@ def url_input():
 
     def insertproductdatabase():
         mycursor = mydb.cursor()
-        mycursor.execute("SELECT * FROM product")
+        mycursor.execute("SELECT product.id, product.name, brand.brand_name FROM product INNER JOIN brand ON brand.id = product.brand")
         myresult = mycursor.fetchall()
 
         print(" ")
@@ -59,19 +59,19 @@ def url_input():
             val = 'number'
 
             if val == 'number':
-                try:
-                    sql = "SELECT * FROM product WHERE id = %s"
-                    val = (productid)
-                    mycursor.execute(sql, (val,))
-                    myresult = mycursor.fetchall()
+                sql = "SELECT product.id, product.name, brand.brand_name FROM product INNER JOIN brand ON brand.id = product.brand WHERE product.id = %s"
+                val = (productid)
+                mycursor.execute(sql, (val,))
+                myresult = mycursor.fetchall()
 
-                    for x in myresult:
+                for x in myresult:
+                    if x == None:
+                        error = "not a usable id"
+                        print(error)
+                        time.sleep(2)
+                        insertproductdatabase()
+                    else:
                         print("product word toegevoegt aan:", x)
-                except:
-                    error = "not a usable id"
-                    print(error)
-                    time.sleep(2)
-                    insertproductdatabase()
 
                 sql = "INSERT INTO product_info (website, url, product) VALUES (%s, %s, %s)"
                 val = (website, url, productid)
@@ -96,28 +96,87 @@ def url_input():
 
         except ValueError:
             if productid == 'no' or productid == 'NO' or productid == 'n':
-                sql = "INSERT INTO product (name) VALUES (%s)"
-                val = (name)
-                mycursor.execute(sql, (val,))
-                mydb.commit()
-                id = mycursor.lastrowid
-                print(mycursor.rowcount, "record inserted with id:", id)
+                mycursor = mydb.cursor()
+                mycursor.execute("SELECT * FROM brand")
+                myresult = mycursor.fetchall()
 
-                sql = "INSERT INTO product_info (website, url, product) VALUES (%s, %s, %s)"
-                val = (website, url, id)
-                mycursor.execute(sql, val)
-                mydb.commit()
-                id = mycursor.lastrowid
-                print(mycursor.rowcount, "record inserted with id:", id)
+                for x in myresult:
+                    print(x)
 
-                sql = "INSERT INTO product_track (product_info, price, stock, date) VALUES (%s, %s, %s, %s)"
-                val = (id, input_price, stock, date.strftime("%Y-%m-%d"))
-                mycursor.execute(sql, val)
-                mydb.commit()
-                print(mycursor.rowcount, "record inserted.")
+                print("Type the ID of an existing brand or type the name of a new brand: ", end="")
+                brand = input()
 
-                time.sleep(2)
-                menu()
+                try:
+                    val = int(brand)
+                    val = 'number'
+
+                    if val == 'number':
+                        sql = "SELECT id, brand_name FROM brand WHERE id = %s"
+                        val = (brand)
+                        mycursor.execute(sql, (val,))
+                        myresult = mycursor.fetchall()
+
+                        for x in myresult:
+                            if x == None:
+                                error = "not a usable id"
+                                print(error)
+                                time.sleep(2)
+                                insertproductdatabase()
+                            else:
+                                print("product word toegevoegt aan:", x)
+
+                        sql = "INSERT INTO product (name, brand) VALUES (%s, %s)"
+                        val = (name, brand)
+                        mycursor.execute(sql, val)
+                        mydb.commit()
+                        id = mycursor.lastrowid
+                        print(mycursor.rowcount, "record inserted with id:", id)
+
+                        sql = "INSERT INTO product_info (website, url, product) VALUES (%s, %s, %s)"
+                        val = (website, url, id)
+                        mycursor.execute(sql, val)
+                        mydb.commit()
+                        id = mycursor.lastrowid
+                        print(mycursor.rowcount, "record inserted with id:", id)
+
+                        sql = "INSERT INTO product_track (product_info, price, stock, date) VALUES (%s, %s, %s, %s)"
+                        val = (id, input_price, stock, date.strftime("%Y-%m-%d"))
+                        mycursor.execute(sql, val)
+                        mydb.commit()
+                        print(mycursor.rowcount, "record inserted.")
+
+                        time.sleep(2)
+                        menu()
+                except ValueError:
+                    sql = "INSERT INTO brand (brand_name) VALUES (%s)"
+                    val = (brand)
+                    mycursor.execute(sql, (val,))
+                    mydb.commit()
+                    id = mycursor.lastrowid
+                    print(mycursor.rowcount, "record inserted with id:", id)
+
+                    sql = "INSERT INTO product (name, brand) VALUES (%s, %s)"
+                    val = (name, id)
+                    mycursor.execute(sql, val)
+                    mydb.commit()
+                    id = mycursor.lastrowid
+                    print(mycursor.rowcount, "record inserted with id:", id)
+
+                    sql = "INSERT INTO product_info (website, url, product) VALUES (%s, %s, %s)"
+                    val = (website, url, id)
+                    mycursor.execute(sql, val)
+                    mydb.commit()
+                    id = mycursor.lastrowid
+                    print(mycursor.rowcount, "record inserted with id:", id)
+
+                    sql = "INSERT INTO product_track (product_info, price, stock, date) VALUES (%s, %s, %s, %s)"
+                    val = (id, input_price, stock, date.strftime("%Y-%m-%d"))
+                    mycursor.execute(sql, val)
+                    mydb.commit()
+                    print(mycursor.rowcount, "record inserted.")
+
+                    time.sleep(2)
+                    menu()
             else:
                 error = "not a usable input"
                 print(error)
@@ -185,7 +244,7 @@ def url_input():
             data = json.loads(script)
             input_price = data["Price"]
             stock = lists.find('p', class_="flex items-center align-middle available gap-x-2 stock").text.replace('\n','')
-            
+
             if stock == 'Out of Stock':
                 stock = 0
             else:
@@ -428,7 +487,7 @@ def url_input():
 def database():
     os.system('clear')
     mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM product")
+    mycursor.execute("SELECT product.id, product.name, brand.brand_name FROM product INNER JOIN brand ON brand.id = product.brand")
     myresult = mycursor.fetchall()
 
     print('\033[1m' + "bestaande producten:" + '\033[0m')
